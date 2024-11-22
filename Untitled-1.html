@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Esctuctura del proyecto</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <h1>Cargar archivo Excel desde una ruta fija</h1>
+  <table id="excelTable" border="1" style="margin-top: 20px; border-collapse: collapse;"></table>
+
+  <script>
+    // Ruta fija del archivo Excel
+    const filePath = './proyectt.xlsx'; // Cambia por tu ruta
+
+    // Función para cargar el archivo
+    fetch(filePath)
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar el archivo.");
+        return response.arrayBuffer();
+      })
+      .then(data => {
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Mostrar datos en una tabla
+        const table = document.getElementById('excelTable');
+        rows.forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
